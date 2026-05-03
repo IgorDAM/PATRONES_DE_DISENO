@@ -136,6 +136,7 @@ En REALPRINT usamos: **Strategy** y **Template Method**.
 <a id="creacionales"></a>
 ## 3. Patrones Creacionales
 
+<a id="singleton"></a>
 ### 3.1 Singleton
 
 #### 3.1.1 Nombre y Categoría
@@ -353,7 +354,7 @@ public class OtroController {
 
 #### 3.1.7 Ventajas
 
-1. **Control de instancias:** Garantías que solo existe una instancia → sin duplicados en memoria
+1. **Control de instancias:** Garantiza que solo existe una instancia → sin duplicados en memoria
 2. **Acceso global:** Se puede acceder desde cualquier parte del código (aunque esto puede ser controversial)
 3. **Lazy initialization:** La instancia se puede crear solo cuando sea necesaria
 4. **Thread-safe (en Spring):** El contenedor de Spring maneja sincronización automáticamente
@@ -386,8 +387,9 @@ public class OtroController {
 - **Factory Method:** A menudo se usa en combinación con Singleton para controlar cómo se crea la instancia
 - **Abstract Factory:** Puede usar Singleton internamente
 - **Facade:** Suele ser Singleton (un punto de acceso único a un subsistema)
-- **Borg Pattern:** Alternativa a Singleton que comparte estado entre múltiples instancias
+- **Borg Pattern / Monostate:** El patrón Borg es específico de Python. El equivalente en Java es el **Monostate Pattern**, que comparte estado entre múltiples instancias mediante campos estáticos, en lugar de forzar una sola instancia.
 
+<a id="builder"></a>
 ### 3.2 Builder
 
 #### 3.2.1 Nombre y Categoría
@@ -767,6 +769,7 @@ public LoginResponse login(LoginRequest request) {
 <a id="estructurales"></a>
 ## 4. Patrones Estructurales
 
+<a id="facade"></a>
 ### 4.1 Facade
 
 #### 4.1.1 Nombre y Categoría
@@ -777,7 +780,7 @@ public LoginResponse login(LoginRequest request) {
 
 #### 4.1.2 Intención / Propósito
 
-El patrón Facade resuelve este problema: **¿Cómo simplificar el acceso a un subsistema complejo ocultar detalles de implementación?**
+El patrón Facade resuelve este problema: **¿Cómo simplificar el acceso a un subsistema complejo y ocultar detalles de implementación?**
 
 Imagina que necesitas procesar un pedido. Internamente, tu sistema debe:
 1. Buscar el pedido en la base de datos (repositorio)
@@ -895,28 +898,23 @@ public class PedidoController {
 #### 4.1.4 Estructura: Diagrama UML
 
 ```
-╭───────────────╮
-│    Cliente            │
-│  (Controlador)      │
-╰───────────────╯
-         │ usa
-         │
-╭───────────────╮
-│    PedidoFacade      │  ← FACHADA
-│ (Servicio)         │
-╰───────────────╯
-         │ usa
-     ╭───────────╮
-     │   │   │   │  │
-     │   │   │   │  │
-     v   v   v   v  v
-╭────╮ ╭────╮ ╭────╮ ╭────╮ ╭────╮
-│Repo│ │Inv │ │Not │ │Aud│ │Tax │  ← COMPONENTES
-╰────╯ ╰────╯ ╰────╯ ╰────╯ ╰────╯
- (complejos)
+┌─────────────────────────────────┐
+│       Cliente (Controlador)     │
+└─────────────────────────────────┘
+                 │ usa
+                 ▼
+┌─────────────────────────────────┐
+│     PedidoFacade (Servicio)     │  ← FACHADA
+└─────────────────────────────────┘
+         │ usa internamente
+         ▼
+┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐
+│ Repo │ │ Inv  │ │ Not  │ │ Aud  │ │ Tax  │  ← COMPONENTES
+└──────┘ └──────┘ └──────┘ └──────┘ └──────┘
+                  (complejos)
 
 Ventaja: El cliente solo ve la fachada;
-los componentes internos quedan ocultos
+los componentes internos quedan ocultos.
 ```
 
 #### 4.1.5 Implementación en REALPRINT: PedidoService
@@ -1124,6 +1122,7 @@ public class AuthController {
 - **Strategy:** Puede usarse dentro de una Facade para elegir algoritmos
 - **Proxy:** Ambos simplificar acceso, pero Proxy controla el acceso; Facade simplifica interfaz
 
+<a id="dto-adapter"></a>
 ### 4.2 Data Transfer Object (DTO) / Adapter
 
 #### 4.2.1 Nombre y Categoría
@@ -1131,6 +1130,8 @@ public class AuthController {
 **Patrón:** Data Transfer Object (DTO) / Adapter  
 **Categoría:** Estructural  
 **Propósito:** Convertir la interfaz de una clase a otra que los clientes esperan. En el contexto de REALPRINT, el Adapter es el `PedidoMapper`, que convierte entre la entidad `Pedido` (modelo de BD) y el DTO `PedidoDTO` (modelo de API REST).
+
+> ⚠️ **Nota:** El DTO no es un patrón GoF original; es un patrón de arquitectura empresarial documentado por Martin Fowler en *Patterns of Enterprise Application Architecture* (2002). Se incluye aquí junto al **Adapter** (patrón GoF) porque `PedidoMapper` actúa como adaptador entre dos representaciones incompatibles: la entidad de BD y el modelo de API REST. Esta combinación es la más habitual en aplicaciones Spring Boot.
 
 #### 4.2.2 Intención / Propósito
 
@@ -1403,6 +1404,7 @@ public class PedidoController {
 <a id="comportamiento"></a>
 ## 5. Patrones de Comportamiento
 
+<a id="strategy"></a>
 ### 5.1 Strategy
 
 #### 5.1.1 Nombre y Categoría
@@ -1488,36 +1490,32 @@ public class PedidoController {
 #### 5.1.4 Estructura: Diagrama UML
 
 ```
-╭────────────────────╮
-│  AuthorizationStrategy (Interfaz)  │  ← Interfaz común
-├────────────────────┤
-│ + authorize(): boolean              │
-╰────────────────────╯
-   ↑   ↑
-   │   │
-   │   └─────────────────────────────────╮
-   │                                     │
-   │                                 ╭────────────────────╮
-   │                                 │  ClienteStrategy      │
-   │                                 ├────────────────────┤
-   │                                 │ Solo si cliente == su│
-   │                                 │ + authorize(): bool  │
-   └──────────────────────────────────────────────────└
-   └─────────────────────────────────╮
-                                    │  AdminStrategy        │
-                                    ├────────────────────┤
-                                    │ Siempre permite       │
-                                    │ + authorize(): bool  │
-                                    ╰────────────────────╯
+┌──────────────────────────────────┐
+│  «interface» AuthorizationStrategy│  ← Interfaz común
+├──────────────────────────────────┤
+│ + authorize(): boolean            │
+└──────────────────────────────────┘
+              ▲            ▲
+              │            │
+┌─────────────────┐  ┌─────────────────┐
+│  AdminStrategy  │  │ ClienteStrategy │
+├─────────────────┤  ├─────────────────┤
+│ Siempre permite │  │Solo si cliente  │
+│                 │  │== dueño         │
+│ +authorize():   │  │ +authorize():   │
+│   return true   │  │   return owner  │
+└─────────────────┘  └─────────────────┘
 
-Cliente elige la strategy según el contexto:
-if (role == ADMIN) → usar AdminStrategy
-if (role == CLIENTE) → usar ClienteStrategy
+El cliente elige la strategy según el contexto:
+  if (role == ADMIN)   → usar AdminStrategy
+  if (role == CLIENTE) → usar ClienteStrategy
 ```
 
 #### 5.1.5 Implementación en REALPRINT: SecurityRulesService
 
 En REALPRINT, **`SecurityRulesService`** encapsula las estrategias de autorización:
+
+> ⚠️ **Nota:** En el patrón Strategy clásico existe una interfaz común con múltiples clases concretas intercambiables en tiempo de ejecución. En REALPRINT, la implementación es una variante **declarativa**: `SecurityRulesService` es una única clase con varios métodos, y Spring Security selecciona el comportamiento correcto a través de `@PreAuthorize`/`@PostAuthorize`. El espíritu del patrón (encapsular estrategias de autorización intercambiables según el contexto) se mantiene íntegro.
 
 ```java
 // ✅ STRATEGY EN REALPRINT
@@ -1675,6 +1673,7 @@ public class PedidoController {
 - **Decorator:** Ambos permite cambios en tiempo de ejecución
 - **Factory:** Puede usarse para crear las estrategias correctas
 
+<a id="template-method"></a>
 ### 5.2 Template Method
 
 #### 5.2.1 Nombre y Categoría
@@ -1790,6 +1789,8 @@ lo que varía es el handle()
 #### 5.2.5 Implementación en REALPRINT: GlobalExceptionHandler
 
 En REALPRINT, **`GlobalExceptionHandler`** implementa Template Method:
+
+> ⚠️ **Nota:** El Template Method clásico requiere herencia: una clase abstracta con un método plantilla que delega pasos específicos a subclases. En REALPRINT, `GlobalExceptionHandler` no usa herencia formal; el "template" es una convención de código que todos los `@ExceptionHandler` respetan (log → status HTTP → estructura de respuesta → retorno). Es una aplicación **conceptual** del patrón: Spring gestiona la selección y despacho internamente, sin necesidad de subclases explícitas.
 
 ```java
 // ✅ TEMPLATE METHOD EN REALPRINT
@@ -1943,6 +1944,7 @@ public class PedidoController {
 
 ---
 
+<a id="conclusión"></a>
 ## 6. Conclusión y Síntesis
 
 ### 6.1 Recapitulación de los Seis Patrones
@@ -2028,10 +2030,10 @@ En conformidad con los requisitos de la tarea, este manual incluye la siguiente 
 ### 7.1 Herramientas IA Utilizadas
 
 - **Claude (Anthropic)** - Utilizado como herramienta de apoyo para:
-  - Generar estructuras de diagrama UML en texto (formato ASCII)
-  - Sugerir mejoras en la redacción de explicaciones
-  - Revisar la coherencia del documento
-  - Generar ejemplos de código alternativo para comparar
+   - Generar estructuras de diagrama UML en texto (formato ASCII)
+   - Sugerir mejoras en la redacción de explicaciones
+   - Revisar la coherencia del documento
+   - Generar ejemplos de código alternativo para comparar
 
 ### 7.2 Partes Concretas donde se Utilizó IA
 
