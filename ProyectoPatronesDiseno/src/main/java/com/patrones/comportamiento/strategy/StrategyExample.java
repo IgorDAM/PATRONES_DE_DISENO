@@ -10,8 +10,7 @@ public class StrategyExample {
         
         // Caso 1: ADMIN intenta realizar acciones
         System.out.println("--- Caso 1: Usuario ADMIN ---\n");
-        StrategyClasses.SecurityService adminSecurity = 
-            new StrategyClasses.SecurityService("ADMIN");
+        SecurityService adminSecurity = new SecurityService("ADMIN");
         
         System.out.println("1. ¿ADMIN puede leer pedido (userId=100, ownerId=200)?");
         System.out.println("   Respuesta: " + adminSecurity.canReadOrder(100L, 200L));
@@ -27,8 +26,7 @@ public class StrategyExample {
         
         // Caso 2: CLIENTE intenta realizar acciones
         System.out.println("--- Caso 2: Usuario CLIENTE ---\n");
-        StrategyClasses.SecurityService clienteSecurity = 
-            new StrategyClasses.SecurityService("CLIENTE");
+        SecurityService clienteSecurity = new SecurityService("CLIENTE");
         
         System.out.println("1. ¿CLIENTE puede leer su propio pedido (userId=100, ownerId=100)?");
         System.out.println("   Respuesta: " + clienteSecurity.canReadOrder(100L, 100L));
