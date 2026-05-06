@@ -1,16 +1,20 @@
-# Manual de Patrones de Diseño en Java
-## Aplicados en PROYECTO_REALPRINT
+<div align="center">
 
 ---
 
-## 📄 Portada
+# Manual de Patrones de Diseño en Java
+## Análisis e implementación en el proyecto REALPRINT
 
-**Título:** Manual de Patrones de Diseño en Java  
-**Subtítulo:** Análisis e implementación en el proyecto REALPRINT  
-**Autor:** [Tu nombre]  
+**Autor:** Igor Sánchez  
 **Fecha:** Abril 2026  
-**Curso:** 2º DAM - Programación Orientada a Objetos  
+**Curso:** 2º DAM  
 **Módulo:** Patrones de Diseño (Tarea Optativa)
+
+![Logo o imagen decorativa](descargar.jpg)
+---
+</div>
+
+---
 
 ---
 
@@ -28,7 +32,8 @@
    - 5.1 [Strategy](#strategy)
    - 5.2 [Template Method](#template-method)
 6. [Conclusión y Síntesis](#conclusión)
-7. [Declaración de Uso de LLMs/IA](#llms)
+7. [Reflexión Personal - Mis Aprendizajes](#reflexion-personal)
+8. [Declaración de Uso de LLMs/IA](#llms)
 
 ---
 
@@ -2022,12 +2027,72 @@ Ahora que entiendes estos patrones en el contexto de REALPRINT, considera:
 
 ---
 
+<a id="reflexion-personal"></a>
+## 7. Reflexión Personal - Mis Aprendizajes
+
+### 7.1 Lo Aprendido
+
+Tras completar este manual, mi comprensión de los patrones evolucionó través de varias fases:
+
+1. **Los patrones resuelven problemas reales:** No son académicos. Trabajando con REALPRINT, vi que:
+   - **Singleton** existe porque necesito que solo una instancia gestione los archivos
+   - **Builder** existe porque los DTOs tienen muchos campos opcionales
+   - **Facade** existe porque los controladores no deberían saber todos los detalles internos
+   - **Strategy** existe porque necesito autorización diferente según el rol
+   - **Template Method** existe porque manejar errores siempre sigue el mismo flujo
+
+2. **Los patrones trabajan juntos:** No actúan aislados. Por ejemplo:
+   - El **Builder** construye los DTOs que el **Adapter** convierte
+   - La **Facade** usa **Strategy** internamente para decisiones
+   - El **Singleton** en Spring se combina automáticamente con **Inyección de Dependencias**
+
+3. **Spring implementa patrones automáticamente:** Anotaciones como `@Service` son Singleton, `@Builder` es el patrón Builder, `@RestControllerAdvice` es Template Method. Entender patrones significa entender qué hace Spring bajo el capó.
+
+4. **Claridad sobre complejidad:** Un patrón bien usado hace el código más legible. Un patrón sobreutilizado lo hace confuso. La clave está en el equilibrio y en la estructura "problema → solución" que ayuda a entender el *por qué*.
+
+### 7.2 Reconociendo Patrones
+
+Ahora puedo identificar patrones en varios contextos:
+
+**En REALPRINT:**
+- `@Service` = Singleton + Facade
+- `PedidoMapper` = Adapter
+- `SecurityRulesService` = Strategy
+- `GlobalExceptionHandler` = Template Method
+- `@Builder` (Lombok) = Builder
+
+**En código general:**
+- Clase con `getInstance()` estática = Singleton
+- Cualquier clase que convierta formatos = Adapter
+- Cualquier servicio simplificador = Facade
+- Clase base con métodos abstractos = Template Method
+- Estructura con opciones intercambiables = Strategy
+
+### 7.3 Lecciones Clave
+
+1. **Los patrones no se memorizan, se entienden** — No memoricé "getInstance()", entendí *por qué* existe.
+2. **Patrón ≠ complejidad** — Si el código se vuelve más complejo, probablemente no es el patrón correcto.
+3. **Spring economy** — Los frameworks tienen decisiones inteligentes basadas en patrones. Esto no es "trampa", es buena arquitectura.
+4. **Anti-patrones existen** — No todo necesita un patrón; simple es mejor que complejo (a menos que lo simple sea un caos).
+
+### 7.4 Reflexión Final
+
+Este trabajo me enseñó más a través de la **lectura crítica de código real** que a través de teoría pura. Aprendí a:
+
+- Leer código preguntándome: "¿Por qué está estructurado así?" y "¿Qué patrón está aquí?"
+- Escribir código pensando en futuro: "¿Será difícil cambiar esto?" y "¿Alguien más lo entenderá?"
+- Apreciar el trabajo de otros desarrolladores en frameworks populares (Spring, Hibernate), cuyas decisiones inteligentes a menudo están basadas en patrones
+
+**Conclusión:** Los patrones de diseño no son lujos académicos; son herramientas prácticas que hacen que el código sea más mantenible, flexible y profesional. Trabajar con REALPRINT y estos 6 patrones me ha dado confianza para reconocerlos, aplicarlos y defenderlos.
+
+---
+
 <a id="llms"></a>
-## 7. Declaración de Uso de LLMs/IA
+## 8. Declaración de Uso de LLMs/IA
 
 En conformidad con los requisitos de la tarea, este manual incluye la siguiente declaración sobre el uso de herramientas de IA generativa:
 
-### 7.1 Herramientas IA Utilizadas
+### 8.1 Herramientas IA Utilizadas
 
 - **Claude (Anthropic)** - Utilizado como herramienta de apoyo para:
    - Generar estructuras de diagrama UML en texto (formato ASCII)
@@ -2035,7 +2100,7 @@ En conformidad con los requisitos de la tarea, este manual incluye la siguiente 
    - Revisar la coherencia del documento
    - Generar ejemplos de código alternativo para comparar
 
-### 7.2 Partes Concretas donde se Utilizó IA
+### 8.2 Partes Concretas donde se Utilizó IA
 
 **Redacción:**
 - Reformulación de explicaciones para hacerlas más didácticas (ej: "Problema sin Patrón" en cada sección)
@@ -2054,7 +2119,7 @@ En conformidad con los requisitos de la tarea, este manual incluye la siguiente 
 - Revisión técnica de que los ejemplos sean correctos
 - Validación de que los diagramas UML correspondan al código mostrado
 
-### 7.3 Partes de Autoría Claramente Humana
+### 8.3 Partes de Autoría Claramente Humana
 
 **Selección de patrones:**
 - Decisión de documentar exactamente estos 6 patrones de entre todos los disponibles
@@ -2084,7 +2149,7 @@ En conformidad con los requisitos de la tarea, este manual incluye la siguiente 
 - Cómo equilibrar profundidad con accesibilidad
 - Qué relaciones mostrar entre patrones
 
-### 7.4 Resumen del Uso Responsable de IA
+### 8.4 Resumen del Uso Responsable de IA
 
 La IA se utilizó como **herramienta de apoyo**, no de sustitución:
 
@@ -2101,7 +2166,7 @@ La IA se utilizó como **herramienta de apoyo**, no de sustitución:
 - Tomar decisiones sobre qué mostrar y por qué
 - Verificar que cada ejemplo corresponda exactamente con REALPRINT
 
-### 7.5 Capacidad de Defender el Trabajo
+### 8.5 Capacidad de Defender el Trabajo
 
 Puedo explicar con seguridad:
 

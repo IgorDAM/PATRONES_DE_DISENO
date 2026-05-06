@@ -206,9 +206,9 @@ Estos patrones NO son ejemplos inventados. Están basados en el código real de 
 
 ## Autor
 
-Proyecto educativo para la tarea optativa "Manual de Patrones de Diseño en Java"  
-Curso: 2º DAM - Programación Orientada a Objetos  
-Año: 2026
+Igor Sánchez - 2º DAM - 2026
+Proyecto tarea optativa "Manual de Patrones de Diseño en Java"  
+
 
 ---
 
