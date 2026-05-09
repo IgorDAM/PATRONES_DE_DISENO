@@ -34,7 +34,7 @@ public class DTOAdapterExample {
         System.out.println("  - Id: " + entityDeBD.getId());
         System.out.println("  - Servicio: " + entityDeBD.getServicio());
         System.out.println("  - Estado: " + entityDeBD.getEstado());
-        System.out.println("  ⚠️  Estado es ENUM MAYUSCULAS (PENDIENTE)");
+        System.out.println("  ⚠️  Estado es ENUM MAYÚSCULAS (PENDIENTE)");
 
         // -------------------------------------------------------
         // Paso 2: Convertir Entity → DTO usando el Adapter (Mapper).
@@ -85,12 +85,12 @@ public class DTOAdapterExample {
         System.out.println("  - Id: " + entityParaBD.getId());
         System.out.println("  - Servicio: " + entityParaBD.getServicio());
         System.out.println("  - Estado: " + entityParaBD.getEstado());
-        System.out.println("  ✅ Estado convertido a ENUM MAYUSCULAS (EN_PROCESO)");
+        System.out.println("  ✅ Estado convertido a ENUM MAYÚSCULAS (EN_PROCESO)");
 
         // El Mapper centraliza toda la conversión — si el formato cambia,
         // solo se toca PedidoMapper, no el resto de la aplicación.
         System.out.println("\n✅ Conclusión: El Adapter convierte entre formatos incompatibles");
-        System.out.println("   BD usa ENUM MAYUSCULAS, API usa String minusculas");
+        System.out.println("   BD usa ENUM MAYÚSCULAS, API usa String minúsculas");
         System.out.println("   El Mapper oculta esta conversión automáticamente.\n");
     }
 }

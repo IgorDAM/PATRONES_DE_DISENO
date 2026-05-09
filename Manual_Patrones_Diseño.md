@@ -56,14 +56,14 @@ Los patrones de diseño aportan varios beneficios al desarrollo de software:
 - **Flexibilidad:** Los patrones facilitan cambios futuros sin tocar el código existente (principio Abierto/Cerrado).
 - **Calidad del diseño:** Aplicar patrones adecuadamente reduce acoplamiento y aumenta cohesión, dos pilares de buen diseño OOP.
 
-### Patrones en PROYECTO_REALPRINT
+### Patrones en REALPRINT
 
 REALPRINT es una aplicación **Spring Boot** para gestión de pedidos de impresión. En su arquitectura, encontramos patrones de diseño aplicados de forma natural y efectiva:
 
 - **Singleton:** Los servicios Spring (`@Service`) son instancias únicas manejadas por el contenedor.
 - **Builder:** Se usa extensivamente vía Lombok para construir objetos complejos de forma fluida.
 - **Facade:** Los servicios (`PedidoService`, `AuthService`) abstraen la complejidad de repositorios y lógica de negocio.
-- **Data Transfer Object (DTO):** El `PedidoMapper` convierte entre entidades de base de datos y DTOs para la API REST.
+- **Data Transfer Object (DTO):** El `PedidoMapper` convierte entre entidades de base de datos(BD) y DTOs para la API REST.
 - **Strategy:** La clase `SecurityRulesService` implementa diferentes estrategias de autorización según el rol del usuario.
 - **Template Method:** El `GlobalExceptionHandler` define un flujo estándar para manejar excepciones.
 
@@ -361,22 +361,22 @@ public class OtroController {
 
 1. **Control de instancias:** Garantiza que solo existe una instancia → sin duplicados en memoria
 2. **Acceso global:** Se puede acceder desde cualquier parte del código (aunque esto puede ser controversial)
-3. **Lazy initialization:** La instancia se puede crear solo cuando sea necesaria
+3. **Lazy initialization:** La instancia puede crearse solo cuando sea necesaria
 4. **Thread-safe (en Spring):** El contenedor de Spring maneja sincronización automáticamente
 5. **Facilita pruebas:** Con Spring, puedes mockear la dependencia en tests de forma sencilla
 
 #### 3.1.8 Desventajas
 
-1. **Testing complicado:** En el patrón manual, es difícil reemplazar la instancia en tests
-2. **Acoplamiento global:** El código se acopla al Singleton, haciendo difícil cambios futuros
-3. **Oculta dependencias:** No es evidente qué depende de qué (especialmente con getters estáticos)
-4. **Sincronización:** En versiones manual, la sincronización puede impactar rendimiento
-5. **Limitaciones de escalabilidad:** En arquitecturas distribuidas, Singleton por máquina puede no ser suficiente
+1. **Testing complicado:** En el patrón manual, es difícil reemplazar la instancia durante las pruebas (aunque Spring lo facilita)
+2. **Acoplamiento global:** El código queda acoplado al Singleton, lo que dificulta los cambios futuros
+3. **Dependencias ocultas:** No es evidente qué componentes dependen de cuales (especialmente con getters estáticos)
+4. **Sincronización:** En versiones manuales, la sincronización puede afectar el rendimiento
+5. **Limitaciones de escalabilidad:** En arquitecturas distribuidas, un Singleton por máquina puede no ser suficiente
 
 #### 3.1.9 Cuándo Usarlo / Cuándo No
 
 **✅ USAR Singleton cuando:**
-- Necesitas exactamente una instancia de una clase (ej: gestor de base de datos, servicio de logging)
+- Necesitas exactamente una instancia de una clase (ej: gestor de BD, servicio de logging)
 - La instancia gestiona un recurso compartido costoso (conexiones de red, archivos, memoria)
 - Quieres un punto de acceso centralizado a ese recurso
 - Trabajas con Spring y necesitas un servicio inyectable
@@ -737,7 +737,7 @@ public LoginResponse login(LoginRequest request) {
 
 1. **Legibilidad:** El código que construye objetos es claro y autodocumentado
 2. **Flexibilidad:** Puedes omitir parámetros opcionales sin usar nulls
-3. **Inmutabilidad (opcional):** El patrón facilita crear objetos inmutables
+3. **Inmutabilidad (opcional):** El patrón facilita la creación de objetos inmutables
 4. **Validación:** Puedes validar el objeto en el método `build()` antes de crearlo
 5. **Facilita mantenimiento:** Añadir nuevos campos es simple; solo añades un nuevo método setter en Builder
 
@@ -788,7 +788,7 @@ public LoginResponse login(LoginRequest request) {
 El patrón Facade resuelve este problema: **¿Cómo simplificar el acceso a un subsistema complejo y ocultar detalles de implementación?**
 
 Imagina que necesitas procesar un pedido. Internamente, tu sistema debe:
-1. Buscar el pedido en la base de datos (repositorio)
+1. Buscar el pedido en la BD (repositorio)
 2. Validar que el estado sea válido
 3. Calcular impuestos y descuentos
 4. Actualizar el inventario
@@ -1113,7 +1113,7 @@ public class AuthController {
 - Quieres simplificar el acceso para los clientes
 - La lógica de negocio es compleja
 - Necesitas centralizar la lógica para facilitar cambios
-- Usas Spring y creas servicios `@Service` (ya es Facade implicitamente)
+- Usas Spring y creas servicios `@Service` (ya es Facade implícitamente)
 
 **❌ NO USAR cuando:**
 - La lógica es muy simple (1-2 operaciones triviales)
@@ -1125,7 +1125,7 @@ public class AuthController {
 - **Singleton:** Las fachadas suelen ser Singletons (instancia única)
 - **Observer:** Puede trabajar con Facade para notificar cambios
 - **Strategy:** Puede usarse dentro de una Facade para elegir algoritmos
-- **Proxy:** Ambos simplificar acceso, pero Proxy controla el acceso; Facade simplifica interfaz
+- **Proxy:** Ambos simplifican el acceso, pero Proxy controla el acceso; Facade simplifica interfaz
 
 <a id="dto-adapter"></a>
 ### 4.2 Data Transfer Object (DTO) / Adapter
@@ -1143,8 +1143,8 @@ public class AuthController {
 El patrón Adapter (implementado como DTO Mapper) resuelve este problema: **¿Cómo convertir un objeto de una forma a otra compatible con lo que el cliente espera?**
 
 En REALPRINT:
-- La **BD guarda** `Pedido` con campos en MAYUSCULAS (`PedidoEstado.PENDIENTE`)
-- La **API REST devuelve** `PedidoDTO` con estados en minusculas (`"pendiente"`)
+- La **BD guarda** `Pedido` con campos en MAYÚSCULAS (`PedidoEstado.PENDIENTE`)
+- La **API REST devuelve** `PedidoDTO` con estados en minúsculas (`"pendiente"`)
 - Necesitas un **puente** que convierte entre estos formatos
 
 Otras razones para usar DTOs:
@@ -1193,7 +1193,7 @@ JSON que sale:
     "email": "juan@...",
     "activo": true
   },
-  "estado": "PENDIENTE",  // ← MAYUSCULAS (no consistente con frontend)
+  "estado": "PENDIENTE",  // ← MAYÚSCULAS (no consistente con frontend)
   "createdAt": "2026-04-28T10:30:00",  // ← Formato puede no ser esperado
   // ... más campos ...
 }
@@ -1207,7 +1207,7 @@ JSON que sale:
 ├─────────────────────────────────────────┤
 │ - id: Long                              │
 │ - cliente: Usuario                      │
-│ - estado: PedidoEstado (ENUM)           │  MAYUSCULAS
+│ - estado: PedidoEstado (ENUM)           │  MAYÚSCULAS
 │ - createdAt: LocalDateTime              │
 │ ... (otros atributos)                   │
 └─────────────────────────────────────────┘
@@ -1223,7 +1223,7 @@ JSON que sale:
 │ - id: Long                              │
 │ - clienteId: Long                       │  Solo ID (no objeto completo)
 │ - clienteNombre: String                 │  Información extra para UI
-│ - estado: String                        │  minusculas
+│ - estado: String                        │  minúsculas
 │ - fecha: LocalDate (sin hora)           │  Solo lo necesario
 │ ... (otros atributos)                   │
 └─────────────────────────────────────────┘
@@ -1242,7 +1242,7 @@ public class PedidoMapper {
     /**
      * Convierte Pedido (Entity) → PedidoDTO
      * Cambios importantes:
-     * 1. ENUM estado a string minusculas: PENDIENTE → "pendiente"
+     * 1. ENUM estado a string minúsculas: PENDIENTE → "pendiente"
      * 2. Usuario completo se convierte en clienteId + clienteNombre
      * 3. Solo devuelves lo que el frontend necesita
      */
@@ -1256,7 +1256,7 @@ public class PedidoMapper {
                 // Extrae solo ID y nombre del usuario
                 .clienteId(pedido.getCliente() != null ? pedido.getCliente().getId() : null)
                 .clienteNombre(pedido.getCliente() != null ? pedido.getCliente().getNombre() : "")
-                // CRITICO: Convierte ENUM a minusculas
+                // CRITICO: Convierte ENUM a minúsculas
                 .servicio(pedido.getServicio())
                 .descripcion(pedido.getDescripcion())
                 .cantidad(pedido.getCantidad())
@@ -1272,7 +1272,7 @@ public class PedidoMapper {
     /**
      * Convierte PedidoDTO → Pedido (Entity)
      * Cambios importantes:
-     * 1. String estado minusculas → ENUM MAYUSCULAS
+     * 1. String estado minúsculas → ENUM MAYÚSCULAS
      * 2. El cliente NO se asigna aquí (lo hace el servicio)
      */
     public static Pedido toEntity(PedidoDTO dto) {
@@ -1358,7 +1358,7 @@ public class PedidoController {
   "descripcion": "Imprimir logo",
   "cantidad": 50,
   "fecha": "2026-04-28",  // ✅ Solo fecha
-  "estado": "pendiente",  // ✅ minusculas
+  "estado": "pendiente",  // ✅ minúsculas
   "total": "250.00"
   // ✅ NO hay passwordHash, NO hay createdAt/updatedAt, NO hay relaciones complejas
 }
@@ -1377,7 +1377,7 @@ public class PedidoController {
 #### 4.2.7 Desventajas
 
 1. **Código boilerplate:** Más clases y métodos de conversión
-2. **Overhead:** Las conversiones cuesta CPU (aunque es mínimo en REALPRINT)
+2. **Overhead:** Las conversiones consumen CPU (aunque es mínimo en REALPRINT)
 3. **Duplicación:** La información está en dos sitios (Entity + DTO)
 4. **Complejidad:** Más capas significa más para entender
 
@@ -1675,7 +1675,7 @@ public class PedidoController {
 
 - **State:** Similar, pero State es para cambiar el comportamiento cuando cambia el estado interno
 - **Template Method:** Define un algoritmo; Strategy lo encapsula completamente
-- **Decorator:** Ambos permite cambios en tiempo de ejecución
+- **Decorator:** Ambos permiten cambios en tiempo de ejecución
 - **Factory:** Puede usarse para crear las estrategias correctas
 
 <a id="template-method"></a>
@@ -1861,7 +1861,7 @@ public class GlobalExceptionHandler {
     }
     
     /**
-     * Estructura comun para TODAS las respuestas de error.
+     * Estructura común para TODAS las respuestas de error.
      * Se reutiliza en todos los @ExceptionHandler.
      */
     @lombok.Data
